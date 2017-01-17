@@ -51,12 +51,7 @@ function run_timestep(s::fair, t::Int)
 
         function f!(x, fvec)
             α = x[1]
-            res = -iIRFT100
-            for i=1:4
-                temp = α*p.a[i]*p.τ[i] * (1 - exp(-100/α/p.τ[i]))
-                res += temp
-            end
-            fvec[1] = res
+            fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
         end
 
         v.α[t] = nlsolve(f!, [0.01], autodiff=true, method=:newton).zero[1]
