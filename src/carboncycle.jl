@@ -36,8 +36,7 @@ function run_timestep(s::carboncycle, t::Int)
         v.Cacc[t] = sum(p.E[1:t]) - (v.C[t] - p.C0)
 
         # Initial state-dependent scaling factor
-        v.α[1] = 1.
-
+        v.α[1] = 0.1
     else
 
         # Use iIRF100 equation to solve for α with nlsolve
@@ -50,7 +49,11 @@ function run_timestep(s::carboncycle, t::Int)
         end
 
         # Calculate α
-        v.α[t] = nlsolve(f!, [0.01], autodiff=true, method=:newton).zero[1]
+        res = nlsolve(f!, [v.α[t-1]], autodiff=true)
+        if !converged(res)
+            error("Couldn't find a solution for α.")
+        end
+        v.α[t] = res.zero[1]
 
         # Calculate CO2 concentrations in each pool
         for i=1:4
