@@ -1,79 +1,56 @@
 using Mimi
-using NLsolve
 
-@defcomp fair begin
+include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
+include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
+include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-    # Carbon cycle
-    a = Parameter(index=[4])
-    τ = Parameter(index=[4])
-    E = Parameter(index=[time])
-    α = Variable(index=[time])
-    R = Variable(index=[time,4])
-    C0 = Parameter()
-    C = Variable(index=[time])
-    Cacc = Variable(index=[time])
-    r0 = Parameter()
-    rC = Parameter()
-    rT = Parameter()
+function constructfair(;nsteps=200)
 
-    # RF forcing
-    F2x = Parameter()
-    Fext = Parameter(index=[time])
-    F = Variable(index=[time])
+    m = Model()
+    setindex(m, :time, nsteps)
 
-    # Temp
-    T = Variable(index=[time])
-    Tj = Variable(index=[time,2])
-    c = Parameter(index=[2])
-    d = Parameter(index=[2])
-end
+    # TODO Replace this with a proper emission and forcing loading routine
+    E       = ones(200) .* 8.
+    Fext    = zeros(200)
 
-function run_timestep(s::fair, t::Int)
-    p = s.Parameters
-    v = s.Variables
+    # ---------------------------------------------
+    # Add components to model
+    # ---------------------------------------------
+    addcomponent(m, carboncycle)
+    addcomponent(m, radiativeforcing)
+    addcomponent(m, temperature)
 
-    if t==1
-        # TODO Is this correct?
-        for i=1:4
-            v.R[t,i] = p.a[i]*p.E[t]
-        end
-        v.C[t] = p.C0
-        v.Cacc[t] = sum(p.E[1:t]) - (v.C[t]-p.C0)
-        v.F[t] = p.F2x/log(2)*log(v.C[t]/p.C0) + p.Fext[t]
-        for j=1:2
-            v.Tj[t,j] = 0.
-        end
-        v.T[t] = sum(v.Tj[t,:])
-        v.α[1]=1.
-    else
-        # Solve for α
-        iIRFT100 = p.r0 + p.rC * v.Cacc[t-1] + p.rT * v.T[t-1]
+    # ---------------------------------------------
+    # Read in data
+    # ---------------------------------------------
 
-        function f!(x, fvec)
-            α = x[1]
-            fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
-        end
+    # TODO Add emissions & non-CO2 forcing data
 
-        v.α[t] = nlsolve(f!, [0.01], autodiff=true, method=:newton).zero[1]
+    # ---------------------------------------------
+    # Set component parameters
+    # ---------------------------------------------
+    setparameter(m, :carboncycle, :C0, 278.05158)
+    setparameter(m, :carboncycle, :r0, 35.0)
+    setparameter(m, :carboncycle, :rC, 0.02)
+    setparameter(m, :carboncycle, :rT, 8.5)
+    setparameter(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
+    setparameter(m, :carboncycle, :τ, [10.0^8, 394.4, 36.54, 4.304])
+    setparameter(m, :carboncycle, :E, E)
 
-        # Compute concentrations
+    setparameter(m, :radiativeforcing, :C0, 278.05158)
+    setparameter(m, :radiativeforcing, :F2x, 3.74/log(2))
+    setparameter(m, :radiativeforcing, :Fext, Fext)
 
-        for i=1:4
-            v.R[t,i] = v.R[t-1,i] + p.a[i]*p.E[t] - v.R[t-1,i]/v.α[t]/p.τ[i]
-        end
-        v.C[t] = p.C0 + sum(v.R[t,:])
-        # TODO Change to a recursive equation, should be a bit faster
-        v.Cacc[t] = sum(p.E[1:t]) - (v.C[t]-p.C0)
+    setparameter(m, :temperature, :q, [0.46, 0.27])
+    setparameter(m, :temperature, :d, [8.4, 409.5])
 
-        # Compute forcing
+    # -----------------------------------------------
+    # Create necessary connections between components
+    # -----------------------------------------------
+    connectparameter(m, :radiativeforcing, :C, :carboncycle, :C)
+    connectparameter(m, :temperature, :F, :radiativeforcing, :F)
+    connectparameter(m, :carboncycle, :T, :temperature, :T)
 
-        v.F[t] = p.F2x/log(2)*log(v.C[t]/p.C0) + p.Fext[t]
-
-        # Compute temperature
-
-        for j=1:2
-            v.Tj[t,j] = v.Tj[t-1,j] + (p.c[j]*v.F[t]-v.T[t-1])/p.d[j]
-        end
-        v.T[t] = sum(v.Tj[t,:])
-    end
+    # Return constructed model
+    return m
 end
