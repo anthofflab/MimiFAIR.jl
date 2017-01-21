@@ -1,10 +1,11 @@
 using Mimi
+using DataFrames
 
 include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
 include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
 include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-function constructfair(;nsteps=300, scenario="rcp8.5", start_year = 1900)
+function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
 
     m = Model()
     setindex(m, :time, nsteps)

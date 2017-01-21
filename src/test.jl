@@ -1,6 +1,6 @@
 include(joinpath(dirname(@__FILE__), "fair.jl"))
 
-#Construct and run a base version of the FAIR model (default is 200 timesteps)
+#Construct and run a base version of the FAIR model (default is 250 timesteps)
 try
     base = constructfair()
     run(base)
