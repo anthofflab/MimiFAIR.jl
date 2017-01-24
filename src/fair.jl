@@ -44,7 +44,7 @@ function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
     setparameter(m, :carboncycle, :E, E)
 
     setparameter(m, :radiativeforcing, :C0, 278.05158)
-    setparameter(m, :radiativeforcing, :F2x, 3.74/log(2))
+    setparameter(m, :radiativeforcing, :F2x, 3.74)
     setparameter(m, :radiativeforcing, :Fext, Fext)
 
     setparameter(m, :temperature, :q, [0.33, 0.41])
