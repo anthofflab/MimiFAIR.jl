@@ -1,17 +1,14 @@
 using Mimi
+using DataFrames
 
 include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
 include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
 include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-function constructfair(;nsteps=200)
+function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
 
     m = Model()
     setindex(m, :time, nsteps)
-
-    # TODO Replace this with a proper emission and forcing loading routine
-    E       = ones(200) .* 8.
-    Fext    = zeros(200)
 
     # ---------------------------------------------
     # Add components to model
@@ -23,8 +20,17 @@ function constructfair(;nsteps=200)
     # ---------------------------------------------
     # Read in data
     # ---------------------------------------------
+    emissions_data  = readtable(joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv"), allowcomments=true)
+    forcing_data    = readtable(joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv"), allowcomments=true)
 
-    # TODO Add emissions & non-CO2 forcing data
+    # Find index for start year and subset data
+    start_index     = find(emissions_data[:Year] .== start_year)[1]
+    emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
+    forcing_data    = forcing_data[start_index:(start_index + nsteps-1), :]
+
+    # Create CO2 emissions variable (convert to ppm/year with 1ppm = 2.12 GtC) and non-CO2 radiative forcing variable
+    E   = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2]) ./ 2.12
+    Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data[:TOTAL_ANTHRO_RF] - forcing_data[:CO2_RF]
 
     # ---------------------------------------------
     # Set component parameters
