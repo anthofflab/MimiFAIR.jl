@@ -15,6 +15,11 @@ function run_timestep(s::radiativeforcing, t::Int)
     p = s.Parameters
     v = s.Variables
 
-    # Calculate total radiative forcing
-    v.F[t] = p.F2x / log(2) * log(p.C[t] / p.C0) + p.Fext[t]
+    # Set initial radiative forcing to zero
+    if t==1
+        v.F[t] = 0.0
+    else
+        # Calculate total radiative forcing
+        v.F[t] = (p.F2x / log(2)) * log(p.C[t] / p.C0) + p.Fext[t]
+    end
 end
