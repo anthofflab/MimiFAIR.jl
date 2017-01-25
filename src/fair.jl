@@ -42,13 +42,16 @@ function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
     setparameter(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     setparameter(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
     setparameter(m, :carboncycle, :E, E)
+    setparameter(m, :carboncycle, :gtc2ppm, 2.123)
+    #Remove this once julia matches Python
+    setparameter(m, :carboncycle, :α, zeros(nsteps))
 
-    setparameter(m, :radiativeforcing, :C0, 278.05158)
+    setparameter(m, :radiativeforcing, :C0, 278.0)
     setparameter(m, :radiativeforcing, :F2x, 3.74)
     setparameter(m, :radiativeforcing, :Fext, Fext)
 
-    setparameter(m, :temperature, :q, [0.33, 0.41])
     setparameter(m, :temperature, :d, [239.0, 4.1])
+    setparameter(m, :temperature, :F2x, 3.74)
 
     # -----------------------------------------------
     # Create necessary connections between components
