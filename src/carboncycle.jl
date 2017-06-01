@@ -1,9 +1,10 @@
 using Mimi
 using NLsolve
 
+const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm
+
 @defcomp carboncycle begin
 
-    gtc2ppm = Parameter()               # Conversion factor between GtC and ppm
     C0      = Parameter()               # Pre-industrial CO2 concentrations.
     r0      = Parameter()               # Pre-industrial iIRF100.
     rC      = Parameter()               # Increase in iIRF100 with cumulative carbon uptake (yr/GtC).
@@ -31,7 +32,7 @@ function run_timestep(s::carboncycle, t::Int)
 
         # "Initialise the carbon pools to be correct for first timestep in numerical method" -Python Version of FAIR
         for i=1:4
-            v.R[t,i] = p.a[i] * p.E[t] / p.gtc2ppm * 0.5
+            v.R[t,i] = p.a[i] * p.E[t] / gtc2ppm * 0.5
         end
 
         # Initical change and total CO2 concentration
@@ -64,7 +65,7 @@ function run_timestep(s::carboncycle, t::Int)
         #Calculate updated carbon cycle time constants and CO2 concentrations in each pool
         for i=1:4
             b_new = p.τ[i] * p.α[t]
-            v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + 0.5 * p.a[i] * (p.E[t] + p.E[t-1]) / p.gtc2ppm
+            v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + 0.5 * p.a[i] * (p.E[t] + p.E[t-1]) / gtc2ppm
         end
 
         # Calculate change in and total CO2 concentrations
@@ -72,6 +73,6 @@ function run_timestep(s::carboncycle, t::Int)
         v.C[t] = v.ΔCO2[t] + p.C0
 
         # Calculate accumulated perturbation of carbon stock
-        v.Cacc[t] = v.Cacc[t-1] + p.E[t] - (v.C[t] -v.C[t-1]) * p.gtc2ppm
+        v.Cacc[t] = v.Cacc[t-1] + p.E[t] - (v.C[t] -v.C[t-1]) * gtc2ppm
     end
 end
