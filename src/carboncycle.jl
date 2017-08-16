@@ -14,15 +14,14 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm
     E       = Parameter(index=[time])   # Annual CO2 emissions (in units of ppm/year with 1ppm = 2.12GtC).
     T       = Parameter(index=[time])   # Global mean surface temperature anomaly.
 
-    #α      = Variable(index=[time])    # State-dependent carbon uptake scaling factor.
+    α       = Variable(index=[time])    # State-dependent carbon uptake scaling factor.
     ΔCO2    = Variable(index=[time])    # Change in atmospheric CO2 concentrations.
     C       = Variable(index=[time])    # Total atmospheric CO2 concentrations.
     Cacc    = Variable(index=[time])    # Accumulated perturbation carbon stock (amount of emitted carbon that no longer resides in the atmosphere).
     R       = Variable(index=[time,4])  # CO2 concentration in each carbon pool.
 
-    # TODO Change scaling factor parameter back into variable and unmute relevant equations. Just setting as a parameter to compare with Python version.
-    α       = Parameter(index=[time])
 end
+
 
 function run_timestep(s::carboncycle, t::Int)
     p = s.Parameters
@@ -34,6 +33,9 @@ function run_timestep(s::carboncycle, t::Int)
         for i=1:4
             v.R[t,i] = p.a[i] * p.E[t] / gtc2ppm * 0.5
         end
+
+        # Initial state-dependet scaling factor.
+        v.α[t] = 1e-10
 
         # Initical change and total CO2 concentration
         v.ΔCO2[t] = 0.0
@@ -47,24 +49,28 @@ function run_timestep(s::carboncycle, t::Int)
         # Use iIRF100 equation to solve for α with nlsolve
         iIRFT100 = p.r0 + p.rC * v.Cacc[t-1] + p.rT * p.T[t-1]
 
-# TODO Uncomment once Python version matches
+        if iIRFT100 >= 97
+            # 113.7930278 taken from original Python version of FAIR.
+            v.α[t] = 113.7930278
 
-        # Function to pass to nlsolve
-        #function f!(x, fvec)
-        #    α = x[1]
-        #    fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
-        #end
+        else
+            # Function to pass to nlsolve
+            function f!(x, fvec)
+                α = x[1]
+                fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
+            end
 
-        # Calculate α
-        #res = nlsolve(f!, [v.α[t-1]], autodiff=true)
-        #if !converged(res)
-        #    error("Couldn't find a solution for α.")
-        #end
-        #v.α[t] = res.zero[1]
+            # Calculate α
+            res = nlsolve(f!, [v.α[t-1]], autodiff=true)
+            if !converged(res)
+                error("Couldn't find a solution for α.")
+            end
+            v.α[t] = res.zero[1]
+        end
 
         #Calculate updated carbon cycle time constants and CO2 concentrations in each pool
         for i=1:4
-            b_new = p.τ[i] * p.α[t]
+            b_new = p.τ[i] * v.α[t]
             v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + 0.5 * p.a[i] * (p.E[t] + p.E[t-1]) / gtc2ppm
         end
 
