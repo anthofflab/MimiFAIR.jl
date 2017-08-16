@@ -1,7 +1,7 @@
 using Mimi
 using NLsolve
 
-const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm
+const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm (with 1ppm = 2.123GtC)
 
 @defcomp carboncycle begin
 
@@ -11,7 +11,7 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm
     rT      = Parameter()               # Increase in iIRF100 with warming (yr/K).
     a       = Parameter(index=[4])      # Fraction of emissions entering carbon pool (geological reabsorption[1], deep ocean invasion/equilibration[2], biospheric uptake/ocean thermocline invasion[3], rapid biospheric uptake/ocean mixed-layer invasion[4]).
     τ       = Parameter(index=[4])      # Decay time constant for each carbon pool in 'a'.
-    E       = Parameter(index=[time])   # Annual CO2 emissions (in units of ppm/year with 1ppm = 2.12GtC).
+    E       = Parameter(index=[time])   # Annual CO2 emissions (in units of GtC).
     T       = Parameter(index=[time])   # Global mean surface temperature anomaly.
 
     α       = Variable(index=[time])    # State-dependent carbon uptake scaling factor.

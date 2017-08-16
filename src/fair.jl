@@ -28,7 +28,7 @@ function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
     emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
     forcing_data    = forcing_data[start_index:(start_index + nsteps-1), :]
 
-    # Create CO2 emissions variable (convert to ppm/year with 1ppm = 2.12 GtC) and non-CO2 radiative forcing variable
+    # Create CO2 emissions variable and non-CO2 radiative forcing variable
     E   = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
     Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data[:TOTAL_ANTHRO_RF] - forcing_data[:CO2_RF]
 
