@@ -21,7 +21,7 @@ tolerance   = 1.0e-6   #Acceptable tolerance for differences between julia and P
 # Get Python version of Fair
 #---------------------------------------------------------------------------------------------------
 
-push!(pyimport("sys")["path"], pwd())
+push!(pyimport("sys")["path"], dirname(@__FILE__))
 @pyimport fair_python_version as FairPy
 
 
