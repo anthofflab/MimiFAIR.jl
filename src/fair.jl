@@ -5,7 +5,7 @@ include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
 include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
 include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
+function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
 
     m = Model()
     setindex(m, :time, nsteps)
@@ -42,8 +42,6 @@ function constructfair(;nsteps=250, scenario="rcp8.5", start_year = 1900)
     setparameter(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     setparameter(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
     setparameter(m, :carboncycle, :E, E)
-    #Remove this once julia matches Python
-    setparameter(m, :carboncycle, :α, zeros(nsteps))
 
     setparameter(m, :radiativeforcing, :C0, 278.0)
     setparameter(m, :radiativeforcing, :F2x, 3.74)
