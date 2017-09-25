@@ -36,9 +36,9 @@ function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
     # Set component parameters
     # ---------------------------------------------
     setparameter(m, :carboncycle, :C0, 278.0)
-    setparameter(m, :carboncycle, :r0, 35.0)
-    setparameter(m, :carboncycle, :rC, 0.02)
-    setparameter(m, :carboncycle, :rT, 4.5)
+    setparameter(m, :carboncycle, :r0, 32.4)
+    setparameter(m, :carboncycle, :rC, 0.019)
+    setparameter(m, :carboncycle, :rT, 4.165)
     setparameter(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     setparameter(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
     setparameter(m, :carboncycle, :E, E)
@@ -48,6 +48,7 @@ function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
     setparameter(m, :radiativeforcing, :Fext, Fext)
 
     setparameter(m, :temperature, :d, [239.0, 4.1])
+    setparameter(m, :temperature, :q, [0.33, 0.41])
     setparameter(m, :temperature, :F2x, 3.74)
 
     # -----------------------------------------------
