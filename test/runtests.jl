@@ -1,5 +1,8 @@
-include("../src/fair.jl")
+using Mimi
 
-# TODO run this with all timesteps
-m = constructfair(nsteps=100)
-run(m)
+include(joinpath(dirname(@__FILE__), "fair.jl"))
+using fair
+
+run(fair)
+
+explore(fair)

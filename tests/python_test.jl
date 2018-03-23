@@ -47,6 +47,8 @@ E = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
 #Calculate temperature and CO2 concentrations for Python FAIR
 py_co2, py_temp = FairPy.fair_scm(in_driver = convert(Array,E))
 
+#remove old code that ran Julia model
+#=
 #Construct base version of model
 include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
 
@@ -60,7 +62,14 @@ setparameter(julia_fair, :radiativeforcing, :Fext, zeros(nsteps))
 
 #Run model
 run(julia_fair)
+=#
 
+#new code to run Julia model
+## TODO:  do we need to set Fext to zeros here?
+using Mimi
+include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
+using fair
+julia_fair = run(fair)
 
 #---------------------------------------------------------------------------------------------------
 # Run tests to compare differences in temperature and CO2 timeseries for Python and julia versions

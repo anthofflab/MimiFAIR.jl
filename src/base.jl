@@ -1,7 +1,8 @@
+using Mimi
+
 include(joinpath(dirname(@__FILE__), "fair.jl"))
+using fair
 
-#Construct a base version of the FAIR model
-base = constructfair()
+run(fair)
 
-#Run model
-run(base)
+explore(fair)
