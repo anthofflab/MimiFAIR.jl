@@ -3,11 +3,11 @@ using Mimi
 @defcomp temperature begin
 
     F2x = Parameter()               # Forcing due to CO2 doubling (w/m2)
-    d   = Parameter(index=[2])      # Thermal response timescales (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - years.
+    d   = Parameter(index=[thermresponse])      # Thermal response timescales (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - years.
     F   = Parameter(index=[time])   # Total radiative forcing (w/m2).
 
-    q   = Parameter(index=[2])      # Forcing coefficient (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - K/(w/m^2).
-    Tj  = Variable(index=[time,2])  # Temperature change for two thermal response times.
+    q   = Parameter(index=[thermresponse])      # Forcing coefficient (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - K/(w/m^2).
+    Tj  = Variable(index=[time,thermresponse])  # Temperature change for two thermal response times.
     T   = Variable(index=[time])    # Global mean surface temperature anomaly.
 
     function init(p, v, d)

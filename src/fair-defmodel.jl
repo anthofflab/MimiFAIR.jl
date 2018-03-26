@@ -7,7 +7,7 @@ include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
 include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
 include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-export fair
+export FAIR
 const global scenario = "rcp8.5"
 const global nsteps = 736
 const global start_year = 1765
@@ -15,9 +15,11 @@ const global start_year = 1765
 const global emissions_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv")
 const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv")
 
-@defmodel fair begin
+@defmodel FAIR begin
 
     index[time] = start_year:1:start_year + nsteps - 1
+    index[thermresponse] = 1:2
+    index[cpools] = 1:4
 
     # ---------------------------------------------
     # Read in data

@@ -9,8 +9,8 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
     r0      = Parameter()               # Pre-industrial iIRF100.
     rC      = Parameter()               # Increase in iIRF100 with cumulative carbon uptake (yr/GtC).
     rT      = Parameter()               # Increase in iIRF100 with warming (yr/K).
-    a       = Parameter(index=[4])      # Fraction of emissions entering carbon pool (geological reabsorption[1], deep ocean invasion/equilibration[2], biospheric uptake/ocean thermocline invasion[3], rapid biospheric uptake/ocean mixed-layer invasion[4]).
-    τ       = Parameter(index=[4])      # Decay time constant for each carbon pool in 'a'.
+    a       = Parameter(index=[cpools])      # Fraction of emissions entering carbon pool (geological reabsorption[1], deep ocean invasion/equilibration[2], biospheric uptake/ocean thermocline invasion[3], rapid biospheric uptake/ocean mixed-layer invasion[4]).
+    τ       = Parameter(index=[cpools])      # Decay time constant for each carbon pool in 'a'.
     E       = Parameter(index=[time])   # Annual CO2 emissions (in units of GtC).
     T       = Parameter(index=[time])   # Global mean surface temperature anomaly.
 
@@ -18,7 +18,7 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
     ΔCO2    = Variable(index=[time])    # Change in atmospheric CO2 concentrations.
     C       = Variable(index=[time])    # Total atmospheric CO2 concentrations.
     Cacc    = Variable(index=[time])    # Accumulated perturbation carbon stock (amount of emitted carbon that no longer resides in the atmosphere).
-    R       = Variable(index=[time,4])  # CO2 concentration in each carbon pool.
+    R       = Variable(index=[time,cpools])  # CO2 concentration in each carbon pool.
 
     function init(p, v, d)
         t=1

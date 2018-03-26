@@ -7,10 +7,10 @@ include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
 include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
 include(joinpath(dirname(@__FILE__), "temperature.jl"))
 
-export fair
+export FAIR
 
 #
-# N.B. See fair-defmodel.jl for the @defmodel version of the following
+# N.B. See FAIR-defmodel.jl for the @defmodel version of the following
 #
 
 const global scenario = "rcp8.5"
@@ -20,15 +20,17 @@ const global start_year = 1765
 const global emissions_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv")
 const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv")
 
-fair = Model()
-set_dimension!(RICE, :time, start_year:1:start_year + nsteps - 1)
+FAIR = Model()
+set_dimension!(FAIR, :time, start_year:1:start_year + nsteps - 1)
+set_dimension!(FAIR, :thermresponse, 1:2)
+set_dimension!(FAIR, :cpools, 1:4)
 
 # ---------------------------------------------
 # Add components to model
 # ---------------------------------------------
-addcomponent(fair, carboncycle, :carboncycle)
-addcomponent(fair, radiativeforcing, :radiativeforcing)
-addcomponent(fair, temperature :temperature)
+addcomponent(FAIR, carboncycle, :carboncycle)
+addcomponent(FAIR, radiativeforcing, :radiativeforcing)
+addcomponent(FAIR, temperature, :temperature)
 
 # ---------------------------------------------
 # Read in data
@@ -51,32 +53,32 @@ Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data
 # ---------------------------------------------
 
 #  CARBON CYCLE 
-set_parameter!(fair, :carboncycle, :C0, 278.0)
-set_parameter!(fair, :carboncycle, :r0, 32.4)
-set_parameter!(fair, :carboncycle, :rC, 0.019)
-set_parameter!(fair, :carboncycle, :rT, 4.165)
-set_parameter!(fair, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
-set_parameter!(fair, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
-set_parameter!(fair, :carboncycle, :E, E)
+set_parameter!(FAIR, :carboncycle, :C0, 278.0)
+set_parameter!(FAIR, :carboncycle, :r0, 32.4)
+set_parameter!(FAIR, :carboncycle, :rC, 0.019)
+set_parameter!(FAIR, :carboncycle, :rT, 4.165)
+set_parameter!(FAIR, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
+set_parameter!(FAIR, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
+set_parameter!(FAIR, :carboncycle, :E, E)
 
 # RADIATIVE FORCING
-set_parameter!(fair, :radiativeforcing, :C0, 278.0)
-set_parameter!(fair, :radiativeforcing, :F2x, 3.74)
-set_parameter!(fair, :radiativeforcing, :Fext, Fext)
+set_parameter!(FAIR, :radiativeforcing, :C0, 278.0)
+set_parameter!(FAIR, :radiativeforcing, :F2x, 3.74)
+set_parameter!(FAIR, :radiativeforcing, :Fext, Fext)
 
 # TEMPERATURE
-set_parameter!(fair, :temperature, :d, [239.0, 4.1])
-set_parameter!(fair, :temperature, :q, [0.33, 0.41])
-set_parameter!(fair, :temperature, :F2x, 3.74)
+set_parameter!(FAIR, :temperature, :d, [239.0, 4.1])
+set_parameter!(FAIR, :temperature, :q, [0.33, 0.41])
+set_parameter!(FAIR, :temperature, :F2x, 3.74)
 
 # -----------------------------------------------
 # Create necessary connections between components
 # -----------------------------------------------
-connect_parameter(fair, :radiativeforcing, :C, :carboncycle, :C, offset = 0)
-connect_parameter(fair, :temperature, :F, :radiativeforcing, :F, offset = 0)
+connect_parameter(FAIR, :radiativeforcing, :C, :carboncycle, :C, offset = 0)
+connect_parameter(FAIR, :temperature, :F, :radiativeforcing, :F, offset = 0)
 # Note: offset=1 => dependence is on on prior timestep, i.e., not a cycle
-connect_parameter(fair, :carboncycle, :T, :temperature, :T, offset = 1)
+connect_parameter(FAIR, :carboncycle, :T, :temperature, :T, offset = 1)
 
-add_connector_comps(fair)
+add_connector_comps(FAIR)
 
 end #module
