@@ -47,32 +47,16 @@ E = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
 #Calculate temperature and CO2 concentrations for Python FAIR
 py_co2, py_temp = FairPy.fair_scm(in_driver = convert(Array,E))
 
-#remove old Mimi code that ran Julia model
-#=
-#Construct base version of model
-include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
-
-#Set number of time steps
-julia_fair = constructfair(nsteps = nsteps, start_year = start_year)
-
-#Set scaling factor, emissions, and non-co2 radiative forcing parameters
-setparameter(julia_fair, :carboncycle, :E, E)
-#setparameter(julia_fair, :carboncycle, :α, scale_factors)
-setparameter(julia_fair, :radiativeforcing, :Fext, zeros(nsteps))
-
-#Run model
-run(julia_fair)
-=#
-
 #new Mimi code to run Julia model
 using Mimi
 include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
-using FAIR
+using fair
 
+#Set scaling factor, emissions, and non-co2 radiative forcing parameters
 set_parameter!(FAIR, :carboncycle, :E, E)
 set_parameter!(FAIR, :radiativeforcing, :Fext, zeros(nsteps))
 
-julia_fair = run(FAIR)
+run(FAIR)
 
 
 #---------------------------------------------------------------------------------------------------
@@ -80,5 +64,5 @@ julia_fair = run(FAIR)
 #---------------------------------------------------------------------------------------------------
 
 # Will throw an error if difference between two versions is greater than tolerance at any timestep
-@test_approx_eq_eps maxabs(py_temp .- julia_fair[:temperature, :T]) 0. tolerance
-@test_approx_eq_eps maxabs(py_co2 .- julia_fair[:carboncycle, :C]) 0. tolerance
+@test_approx_eq_eps maxabs(py_temp .- FAIR[:temperature, :T]) 0. tolerance
+@test_approx_eq_eps maxabs(py_co2 .- FAIR[:carboncycle, :C]) 0. tolerance
