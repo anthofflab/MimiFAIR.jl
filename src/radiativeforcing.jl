@@ -8,15 +8,12 @@ using Mimi
     C   = Parameter(index=[time])   # Total atmospheric CO2 concentrations
 
     F   = Variable(index=[time])    # Total radiative forcing (w/m2)
-
-    function init(p, v, d)
-        t = 1
-        # Set initial radiative forcing to zero
-        v.F[t] = 0.0
-    end
-
+    
     function run_timestep(p, v, d, t)
-        if t>1
+        # Set initial radiative forcing to zero
+        if t==1
+            v.F[t] = 0.0
+        else
             # Calculate total radiative forcing
             v.F[t] = (p.F2x / log(2)) * log(p.C[t] / p.C0) + p.Fext[t]
         end
