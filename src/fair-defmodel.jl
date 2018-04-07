@@ -21,9 +21,7 @@ const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenari
     index[thermresponse] = 1:2
     index[cpools] = 1:4
 
-    # ---------------------------------------------
     # Read in data
-    # ---------------------------------------------
     emissions_data  = readtable(emissions_datafile, allowcomments=true)
     forcing_data    = readtable(forcing_datafile, allowcomments=true)
 
@@ -36,6 +34,7 @@ const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenari
     E   = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
     Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data[:TOTAL_ANTHRO_RF] - forcing_data[:CO2_RF]
 
+    # Add components
     component(carboncycle)
     component(radiativeforcing)
     component(temperature)
@@ -65,6 +64,6 @@ const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenari
     # Note that dependence is on prior timestep ("[t-1]")
     temperature.T[t-1] => carboncycle.T
 
-end
+end #@defmodel
 
 end #module
