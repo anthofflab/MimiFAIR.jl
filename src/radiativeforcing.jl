@@ -11,7 +11,7 @@ using Mimi
     
     function run_timestep(p, v, d, t)
         # Set initial radiative forcing to zero
-        if t==1
+        if is_first(t)
             v.F[t] = 0.0
         else
             # Calculate total radiative forcing

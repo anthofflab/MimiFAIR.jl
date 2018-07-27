@@ -12,7 +12,7 @@ using Mimi
 
     function run_timestep(p, v, d, t)
         #Calculate Temperatures.
-        if t==1
+        if is_first(t)
             #Set initial temperature change for two response times to zero.
             for j=1:2
                 v.Tj[t,j] = 0.0

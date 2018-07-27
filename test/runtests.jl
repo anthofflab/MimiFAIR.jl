@@ -36,7 +36,7 @@ run(m)
 for c in map(name, Mimi.compdefs(m)), v in Mimi.variable_names(m, c)
     
     #load data for comparison
-    filepath = "../data/validation_data_v040/$c-$v.csv"        
+    filepath = joinpath(@__DIR__, "../data/validation_data_v040/$c-$v.csv")        
     results = m[c, v]
 
     if typeof(results) <: Number

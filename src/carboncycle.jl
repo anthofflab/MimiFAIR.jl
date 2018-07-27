@@ -21,7 +21,7 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
     R       = Variable(index=[time,cpools])  # CO2 concentration in each carbon pool.
 
     function run_timestep(p, v, d, t)
-        if t==1
+        if is_first(t)
             # "Initialise the carbon pools to be correct for first timestep in numerical method" -Python Version of FAIR
             for i=1:4
                 v.R[t,i] = p.a[i] * p.E[t] / gtc2ppm * 0.5
