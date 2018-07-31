@@ -53,8 +53,8 @@ include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
 using fair
 
 #Set scaling factor, emissions, and non-co2 radiative forcing parameters
-set_parameter!(FAIR, :carboncycle, :E, E)
-set_parameter!(FAIR, :radiativeforcing, :Fext, zeros(nsteps))
+set_param!(FAIR, :carboncycle, :E, E)
+set_param!(FAIR, :radiativeforcing, :Fext, zeros(nsteps))
 
 run(FAIR)
 

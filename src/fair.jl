@@ -28,9 +28,9 @@ set_dimension!(FAIR, :cpools, 1:4)
 # ---------------------------------------------
 # Add components to model
 # ---------------------------------------------
-addcomponent(FAIR, carboncycle, :carboncycle)
-addcomponent(FAIR, radiativeforcing, :radiativeforcing)
-addcomponent(FAIR, temperature, :temperature)
+add_comp!(FAIR, carboncycle, :carboncycle)
+add_comp!(FAIR, radiativeforcing, :radiativeforcing)
+add_comp!(FAIR, temperature, :temperature)
 
 # ---------------------------------------------
 # Read in data
@@ -53,31 +53,31 @@ Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data
 # ---------------------------------------------
 
 #  CARBON CYCLE 
-set_parameter!(FAIR, :carboncycle, :C0, 278.0)
-set_parameter!(FAIR, :carboncycle, :r0, 32.4)
-set_parameter!(FAIR, :carboncycle, :rC, 0.019)
-set_parameter!(FAIR, :carboncycle, :rT, 4.165)
-set_parameter!(FAIR, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
-set_parameter!(FAIR, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
-set_parameter!(FAIR, :carboncycle, :E, E)
+set_param!(FAIR, :carboncycle, :C0, 278.0)
+set_param!(FAIR, :carboncycle, :r0, 32.4)
+set_param!(FAIR, :carboncycle, :rC, 0.019)
+set_param!(FAIR, :carboncycle, :rT, 4.165)
+set_param!(FAIR, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
+set_param!(FAIR, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
+set_param!(FAIR, :carboncycle, :E, E)
 
 # RADIATIVE FORCING
-set_parameter!(FAIR, :radiativeforcing, :C0, 278.0)
-set_parameter!(FAIR, :radiativeforcing, :F2x, 3.74)
-set_parameter!(FAIR, :radiativeforcing, :Fext, Fext)
+set_param!(FAIR, :radiativeforcing, :C0, 278.0)
+set_param!(FAIR, :radiativeforcing, :F2x, 3.74)
+set_param!(FAIR, :radiativeforcing, :Fext, Fext)
 
 # TEMPERATURE
-set_parameter!(FAIR, :temperature, :d, [239.0, 4.1])
-set_parameter!(FAIR, :temperature, :q, [0.33, 0.41])
-set_parameter!(FAIR, :temperature, :F2x, 3.74)
+set_param!(FAIR, :temperature, :d, [239.0, 4.1])
+set_param!(FAIR, :temperature, :q, [0.33, 0.41])
+set_param!(FAIR, :temperature, :F2x, 3.74)
 
 # -----------------------------------------------
 # Create necessary connections between components
 # -----------------------------------------------
-connect_parameter(FAIR, :radiativeforcing, :C, :carboncycle, :C, offset = 0)
-connect_parameter(FAIR, :temperature, :F, :radiativeforcing, :F, offset = 0)
+connect_param!(FAIR, :radiativeforcing, :C, :carboncycle, :C, offset = 0)
+connect_param!(FAIR, :temperature, :F, :radiativeforcing, :F, offset = 0)
 # Note: offset=1 => dependence is on on prior timestep, i.e., not a cycle
-connect_parameter(FAIR, :carboncycle, :T, :temperature, :T, offset = 1)
+connect_param!(FAIR, :carboncycle, :T, :temperature, :T, offset = 1)
 
 add_connector_comps(FAIR)
 
