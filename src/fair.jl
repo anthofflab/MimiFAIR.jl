@@ -79,6 +79,4 @@ connect_param!(FAIR, :temperature, :F, :radiativeforcing, :F, offset = 0)
 # Note: offset=1 => dependence is on on prior timestep, i.e., not a cycle
 connect_param!(FAIR, :carboncycle, :T, :temperature, :T, offset = 1)
 
-add_connector_comps(FAIR)
-
 end #module
