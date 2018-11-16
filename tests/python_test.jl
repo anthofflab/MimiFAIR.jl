@@ -49,8 +49,8 @@ py_co2, py_temp = FairPy.fair_scm(in_driver = convert(Array,E))
 
 #new Mimi code to run Julia model
 using Mimi
-include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
-using fair
+include("../src/fair.jl")
+using Fair
 
 #Set scaling factor, emissions, and non-co2 radiative forcing parameters
 set_param!(FAIR, :carboncycle, :E, E)

@@ -2,8 +2,8 @@ using Mimi
 using DataTables
 using Base.Test
 
-include(joinpath(@__DIR__, "../src/fair.jl"))
-using fair
+include("../src/fair.jl")
+using Fair
 
 @testset "FAIR" begin
 
@@ -13,7 +13,7 @@ using fair
 
 @testset "FAIR-model" begin
 
-m = fair.FAIR
+m = getfair()
 run(m)
 
 end #FAIR-model testset
@@ -25,12 +25,10 @@ end #FAIR-model testset
 
 @testset "FAIR-integration" begin
 
-Mimi.reset_compdefs()
-
 Precision = 1.0e-11
 nullvalue = -999.999
 
-m = fair.FAIR
+m = getfair()
 run(m)
 
 for c in map(name, Mimi.compdefs(m)), v in Mimi.variable_names(m, c)
