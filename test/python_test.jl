@@ -1,5 +1,5 @@
 using PyCall
-using Base.Test
+using Test
 using DataFrames
 
 #= This file compares annual time series of temperature and CO2 produced by the julia and
@@ -30,10 +30,10 @@ push!(pyimport("sys")["path"], dirname(@__FILE__))
 #---------------------------------------------------------------------------------------------------
 
 #Read data
-emissions_data  = readtable(joinpath(dirname(@__FILE__), "../data/rcp_scenarios/rcp8.5_emissions.csv"), allowcomments=true)
+emissions_data  = DataFrames.readtable(joinpath(dirname(@__FILE__), "../data/rcp_scenarios/rcp8.5_emissions.csv"), allowcomments=true)
 
 # Find index for start year and subset data
-start_index     = find(emissions_data[:Year] .== start_year)[1]
+start_index     = findall(emissions_data[:Year] .== start_year)[1]
 emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
 
 # Create CO2 emissions variable and non-CO2 radiative forcing variable
@@ -50,13 +50,14 @@ py_co2, py_temp = FairPy.fair_scm(in_driver = convert(Array,E))
 #new Mimi code to run Julia model
 using Mimi
 include("../src/fair.jl")
-using Fair
+using .Fair
 
 #Set scaling factor, emissions, and non-co2 radiative forcing parameters
 set_param!(FAIR, :carboncycle, :E, E)
 set_param!(FAIR, :radiativeforcing, :Fext, zeros(nsteps))
 
-run(FAIR)
+m = getfair()
+run(m)
 
 
 #---------------------------------------------------------------------------------------------------

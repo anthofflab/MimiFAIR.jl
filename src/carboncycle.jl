@@ -54,7 +54,7 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
                 end
     
                 # Calculate α
-                res = nlsolve(f!, [v.α[t-1]], autodiff=true)
+                res = nlsolve(f!, [v.α[t-1]], autodiff=:true)
                 if !converged(res)
                     error("Couldn't find a solution for α.")
                 end

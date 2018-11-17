@@ -1,7 +1,7 @@
 using Mimi
 
 include("fair.jl")
-using Fair
+using .Fair
 
 m = getfair()
 run(m)

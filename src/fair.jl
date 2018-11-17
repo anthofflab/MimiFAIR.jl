@@ -11,12 +11,12 @@ export getfair
 
 function getfair()
 
-    const global scenario = "rcp8.5"
-    const global nsteps = 736
-    const global start_year = 1765
+    global scenario = "rcp8.5"
+    global nsteps = 736
+    global start_year = 1765
 
-    const global emissions_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv")
-    const global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv")
+    global emissions_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv")
+    global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv")
 
     m = Model()
     set_dimension!(m, :time, start_year:1:start_year + nsteps - 1)
@@ -33,11 +33,11 @@ function getfair()
     # ---------------------------------------------
     # Read in data
     # ---------------------------------------------
-    emissions_data  = readtable(emissions_datafile, allowcomments=true)
-    forcing_data    = readtable(forcing_datafile, allowcomments=true)
+    emissions_data  = DataFrames.readtable(emissions_datafile, allowcomments=true)
+    forcing_data    = DataFrames.readtable(forcing_datafile, allowcomments=true)
 
     # Find index for start year and subset data
-    start_index     = find(emissions_data[:Year] .== start_year)[1]
+    start_index     = findall(emissions_data[:Year] .== start_year)[1]
     emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
     forcing_data    = forcing_data[start_index:(start_index + nsteps-1), :]
 

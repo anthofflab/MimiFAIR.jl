@@ -1,9 +1,9 @@
 using Mimi
-using DataTables
-using Base.Test
+using DataFrames
+using Test
 
 include("../src/fair.jl")
-using Fair
+using .Fair
 
 @testset "FAIR" begin
 
@@ -13,7 +13,7 @@ using Fair
 
 @testset "FAIR-model" begin
 
-m = getfair()
+global m = getfair()
 run(m)
 
 end #FAIR-model testset
@@ -28,7 +28,7 @@ end #FAIR-model testset
 Precision = 1.0e-11
 nullvalue = -999.999
 
-m = getfair()
+global m = getfair()
 run(m)
 
 for c in map(name, Mimi.compdefs(m)), v in Mimi.variable_names(m, c)
@@ -43,14 +43,15 @@ for c in map(name, Mimi.compdefs(m)), v in Mimi.variable_names(m, c)
     else
         validation_results = convert(Array, DataFrames.readtable(filepath))
 
+        #remove NaNs
+        results[ismissing.(results)] .= nullvalue
+        results[isnan.(results)] .= nullvalue
+        validation_results[isnan.(validation_results)] .= nullvalue
+
         #match dimensions
         if size(validation_results,1) == 1
             validation_results = validation_results'
         end
-
-        #remove NaNs
-        results[isnan.(results)] = nullvalue
-        validation_results[isnan.(validation_results)] = nullvalue
         
     end
     @test results ≈ validation_results atol = Precision
