@@ -1,30 +1,42 @@
+module Fair
+
 using Mimi
 using DataFrames
 
-include(joinpath(dirname(@__FILE__), "carboncycle.jl"))
-include(joinpath(dirname(@__FILE__), "radiativeforcing.jl"))
-include(joinpath(dirname(@__FILE__), "temperature.jl"))
+include("carboncycle.jl")
+include("radiativeforcing.jl")
+include("temperature.jl")
 
-function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
+export getfair
+
+function getfair()
+
+    global scenario = "rcp8.5"
+    global nsteps = 736
+    global start_year = 1765
+
+    global emissions_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv")
+    global forcing_datafile = joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv")
 
     m = Model()
-    setindex(m, :time, nsteps)
+    set_dimension!(m, :time, start_year:1:start_year + nsteps - 1)
+    set_dimension!(m, :thermresponse, 1:2)
 
     # ---------------------------------------------
     # Add components to model
     # ---------------------------------------------
-    addcomponent(m, carboncycle)
-    addcomponent(m, radiativeforcing)
-    addcomponent(m, temperature)
+    add_comp!(m, carboncycle, :carboncycle)
+    add_comp!(m, radiativeforcing, :radiativeforcing)
+    add_comp!(m, temperature, :temperature)
 
     # ---------------------------------------------
     # Read in data
     # ---------------------------------------------
-    emissions_data  = readtable(joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_emissions.csv"), allowcomments=true)
-    forcing_data    = readtable(joinpath(dirname(@__FILE__),"../data/rcp_scenarios/", scenario*"_forcings.csv"), allowcomments=true)
+    emissions_data  = DataFrames.readtable(emissions_datafile, allowcomments=true)
+    forcing_data    = DataFrames.readtable(forcing_datafile, allowcomments=true)
 
     # Find index for start year and subset data
-    start_index     = find(emissions_data[:Year] .== start_year)[1]
+    start_index     = findall(emissions_data[:Year] .== start_year)[1]
     emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
     forcing_data    = forcing_data[start_index:(start_index + nsteps-1), :]
 
@@ -32,32 +44,39 @@ function constructfair(;nsteps=736, scenario="rcp8.5", start_year = 1765)
     E   = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
     Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data[:TOTAL_ANTHRO_RF] - forcing_data[:CO2_RF]
 
+
     # ---------------------------------------------
     # Set component parameters
     # ---------------------------------------------
-    setparameter(m, :carboncycle, :C0, 278.0)
-    setparameter(m, :carboncycle, :r0, 32.4)
-    setparameter(m, :carboncycle, :rC, 0.019)
-    setparameter(m, :carboncycle, :rT, 4.165)
-    setparameter(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
-    setparameter(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
-    setparameter(m, :carboncycle, :E, E)
 
-    setparameter(m, :radiativeforcing, :C0, 278.0)
-    setparameter(m, :radiativeforcing, :F2x, 3.74)
-    setparameter(m, :radiativeforcing, :Fext, Fext)
+    #  CARBON CYCLE 
+    set_param!(m, :carboncycle, :C0, 278.0)
+    set_param!(m, :carboncycle, :r0, 32.4)
+    set_param!(m, :carboncycle, :rC, 0.019)
+    set_param!(m, :carboncycle, :rT, 4.165)
+    set_param!(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
+    set_param!(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
+    set_param!(m, :carboncycle, :E, E)
 
-    setparameter(m, :temperature, :d, [239.0, 4.1])
-    setparameter(m, :temperature, :q, [0.33, 0.41])
-    setparameter(m, :temperature, :F2x, 3.74)
+    # RADIATIVE FORCING
+    set_param!(m, :radiativeforcing, :C0, 278.0)
+    set_param!(m, :radiativeforcing, :F2x, 3.74)
+    set_param!(m, :radiativeforcing, :Fext, Fext)
+
+    # TEMPERATURE
+    set_param!(m, :temperature, :d, [239.0, 4.1])
+    set_param!(m, :temperature, :q, [0.33, 0.41])
+    set_param!(m, :temperature, :F2x, 3.74)
 
     # -----------------------------------------------
     # Create necessary connections between components
     # -----------------------------------------------
-    connectparameter(m, :radiativeforcing, :C, :carboncycle, :C)
-    connectparameter(m, :temperature, :F, :radiativeforcing, :F)
-    connectparameter(m, :carboncycle, :T, :temperature, :T)
+    connect_param!(m, :radiativeforcing, :C, :carboncycle, :C)
+    connect_param!(m, :temperature, :F, :radiativeforcing, :F)
+    # Note: offset=1 => dependence is on on prior timestep, i.e., not a cycle
+    connect_param!(m, :carboncycle, :T, :temperature, :T)
 
-    # Return constructed model
     return m
 end
+
+end #module

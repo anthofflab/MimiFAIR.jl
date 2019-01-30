@@ -1,5 +1,5 @@
 using PyCall
-using Base.Test
+using Test
 using DataFrames
 
 #= This file compares annual time series of temperature and CO2 produced by the julia and
@@ -30,10 +30,10 @@ push!(pyimport("sys")["path"], dirname(@__FILE__))
 #---------------------------------------------------------------------------------------------------
 
 #Read data
-emissions_data  = readtable(joinpath(dirname(@__FILE__), "../data/rcp_scenarios/rcp8.5_emissions.csv"), allowcomments=true)
+emissions_data  = DataFrames.readtable(joinpath(dirname(@__FILE__), "../data/rcp_scenarios/rcp8.5_emissions.csv"), allowcomments=true)
 
 # Find index for start year and subset data
-start_index     = find(emissions_data[:Year] .== start_year)[1]
+start_index     = findall(emissions_data[:Year] .== start_year)[1]
 emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
 
 # Create CO2 emissions variable and non-CO2 radiative forcing variable
@@ -47,19 +47,17 @@ E = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
 #Calculate temperature and CO2 concentrations for Python FAIR
 py_co2, py_temp = FairPy.fair_scm(in_driver = convert(Array,E))
 
-#Construct base version of model
-include(joinpath(dirname(@__FILE__), "../src/fair.jl"))
-
-#Set number of time steps
-julia_fair = constructfair(nsteps = nsteps, start_year = start_year)
+#new Mimi code to run Julia model
+using Mimi
+include("../src/fair.jl")
+using .Fair
 
 #Set scaling factor, emissions, and non-co2 radiative forcing parameters
-setparameter(julia_fair, :carboncycle, :E, E)
-#setparameter(julia_fair, :carboncycle, :α, scale_factors)
-setparameter(julia_fair, :radiativeforcing, :Fext, zeros(nsteps))
+set_param!(FAIR, :carboncycle, :E, E)
+set_param!(FAIR, :radiativeforcing, :Fext, zeros(nsteps))
 
-#Run model
-run(julia_fair)
+m = getfair()
+run(m)
 
 
 #---------------------------------------------------------------------------------------------------
@@ -67,5 +65,5 @@ run(julia_fair)
 #---------------------------------------------------------------------------------------------------
 
 # Will throw an error if difference between two versions is greater than tolerance at any timestep
-@test_approx_eq_eps maxabs(py_temp .- julia_fair[:temperature, :T]) 0. tolerance
-@test_approx_eq_eps maxabs(py_co2 .- julia_fair[:carboncycle, :C]) 0. tolerance
+@test_approx_eq_eps maxabs(py_temp .- FAIR[:temperature, :T]) 0. tolerance
+@test_approx_eq_eps maxabs(py_co2 .- FAIR[:carboncycle, :C]) 0. tolerance

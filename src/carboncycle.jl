@@ -20,65 +20,59 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
     Cacc    = Variable(index=[time])    # Accumulated perturbation carbon stock (amount of emitted carbon that no longer resides in the atmosphere).
     R       = Variable(index=[time,4])  # CO2 concentration in each carbon pool.
 
-end
-
-
-function run_timestep(s::carboncycle, t::Int)
-    p = s.Parameters
-    v = s.Variables
-
-    if t==1
-
-        # "Initialise the carbon pools to be correct for first timestep in numerical method" -Python Version of FAIR
-        for i=1:4
-            v.R[t,i] = p.a[i] * p.E[t] / gtc2ppm * 0.5
-        end
-
-        # Initial state-dependet scaling factor.
-        v.α[t] = 1e-10
-
-        # Initical change and total CO2 concentration
-        v.ΔCO2[t] = 0.0
-        v.C[t] = p.C0
-
-        # Initial carbon stock perturbation
-        v.Cacc[t] = p.E[t]
-
-    else
-
-        # Use iIRF100 equation to solve for α with nlsolve
-        iIRFT100 = p.r0 + p.rC * v.Cacc[t-1] + p.rT * p.T[t-1]
-
-        if iIRFT100 >= 97
-            # 113.7930278 taken from original Python version of FAIR.
-            v.α[t] = 113.7930278
-
+    function run_timestep(p, v, d, t)
+        if is_first(t)
+            # "Initialise the carbon pools to be correct for first timestep in numerical method" -Python Version of FAIR
+            for i=1:4
+                v.R[t,i] = p.a[i] * p.E[t] / gtc2ppm * 0.5
+            end
+    
+            # Initial state-dependet scaling factor.
+            v.α[t] = 1e-10
+    
+            # Initical change and total CO2 concentration
+            v.ΔCO2[t] = 0.0
+            v.C[t] = p.C0
+    
+            # Initial carbon stock perturbation
+            v.Cacc[t] = p.E[t]
+    
         else
-            # Function to pass to nlsolve
-            function f!(x, fvec)
-                α = x[1]
-                fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
+    
+            # Use iIRF100 equation to solve for α with nlsolve
+            iIRFT100 = p.r0 + p.rC * v.Cacc[t-1] + p.rT * p.T[t-1]
+    
+            if iIRFT100 >= 97
+                # 113.7930278 taken from original Python version of FAIR.
+                v.α[t] = 113.7930278
+    
+            else
+                # Function to pass to nlsolve
+                function f!(x, fvec)
+                    α = x[1]
+                    fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
+                end
+    
+                # Calculate α
+                res = nlsolve(f!, [v.α[t-1]], autodiff=:true)
+                if !converged(res)
+                    error("Couldn't find a solution for α.")
+                end
+                v.α[t] = res.zero[1]
             end
-
-            # Calculate α
-            res = nlsolve(f!, [v.α[t-1]], autodiff=true)
-            if !converged(res)
-                error("Couldn't find a solution for α.")
+    
+            #Calculate updated carbon cycle time constants and CO2 concentrations in each pool
+            for i=1:4
+                b_new = p.τ[i] * v.α[t]
+                v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + 0.5 * p.a[i] * (p.E[t] + p.E[t-1]) / gtc2ppm
             end
-            v.α[t] = res.zero[1]
+    
+            # Calculate change in and total CO2 concentrations
+            v.ΔCO2[t] = sum(v.R[t,:])
+            v.C[t] = v.ΔCO2[t] + p.C0
+    
+            # Calculate accumulated perturbation of carbon stock
+            v.Cacc[t] = v.Cacc[t-1] + p.E[t] - (v.C[t] -v.C[t-1]) * gtc2ppm
         end
-
-        #Calculate updated carbon cycle time constants and CO2 concentrations in each pool
-        for i=1:4
-            b_new = p.τ[i] * v.α[t]
-            v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + 0.5 * p.a[i] * (p.E[t] + p.E[t-1]) / gtc2ppm
-        end
-
-        # Calculate change in and total CO2 concentrations
-        v.ΔCO2[t] = sum(v.R[t,:])
-        v.C[t] = v.ΔCO2[t] + p.C0
-
-        # Calculate accumulated perturbation of carbon stock
-        v.Cacc[t] = v.Cacc[t-1] + p.E[t] - (v.C[t] -v.C[t-1]) * gtc2ppm
     end
 end
