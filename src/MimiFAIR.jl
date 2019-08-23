@@ -1,11 +1,11 @@
-module Fair
+module MimiFAIR
 
 using Mimi
 using DataFrames
 
-include("carboncycle.jl")
-include("radiativeforcing.jl")
-include("temperature.jl")
+include("components/carboncycle.jl")
+include("components/radiativeforcing.jl")
+include("components/temperature.jl")
 
 export getfair
 
