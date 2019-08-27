@@ -48,13 +48,13 @@ const gtc2ppm = 2.123                   # Conversion factor between GtC and ppm 
     
             else
                 # Function to pass to nlsolve
-                function f!(x, fvec)
+                function f!(fvec, x)
                     α = x[1]
                     fvec[1] = -iIRFT100 + sum(α .* p.a .* p.τ .* (1 .- exp.(-100 ./ α ./ p.τ)))
                 end
     
                 # Calculate α
-                res = nlsolve(f!, [v.α[t-1]], autodiff=:true)
+                res = nlsolve(f!, [v.α[t-1]], autodiff=:forward)
                 if !converged(res)
                     error("Couldn't find a solution for α.")
                 end
