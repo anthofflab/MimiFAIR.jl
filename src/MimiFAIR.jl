@@ -2,6 +2,7 @@ module MimiFAIR
 
 using Mimi
 using DataFrames
+using CSVFiles
 
 include("components/carboncycle.jl")
 include("components/radiativeforcing.jl")
@@ -32,17 +33,17 @@ function getfair()
     # ---------------------------------------------
     # Read in data
     # ---------------------------------------------
-    emissions_data  = DataFrames.readtable(emissions_datafile, allowcomments=true)
-    forcing_data    = DataFrames.readtable(forcing_datafile, allowcomments=true)
+    emissions_data  = load(emissions_datafile, commentchar='#') |> DataFrame
+    forcing_data    = load(forcing_datafile, commentchar='#') |> DataFrame
 
     # Find index for start year and subset data
-    start_index     = findall(emissions_data[:Year] .== start_year)[1]
+    start_index     = findall(emissions_data.Year .== start_year)[1]
     emissions_data  = emissions_data[start_index:(start_index + nsteps-1), :]
     forcing_data    = forcing_data[start_index:(start_index + nsteps-1), :]
 
     # Create CO2 emissions variable and non-CO2 radiative forcing variable
-    E   = (emissions_data[:FossilCO2] + emissions_data[:OtherCO2])
-    Fext= forcing_data[:SOLAR_RF] + forcing_data[:VOLCANIC_ANNUAL_RF] + forcing_data[:TOTAL_ANTHRO_RF] - forcing_data[:CO2_RF]
+    E   = (emissions_data.FossilCO2 + emissions_data.OtherCO2)
+    Fext= forcing_data.SOLAR_RF + forcing_data.VOLCANIC_ANNUAL_RF + forcing_data.TOTAL_ANTHRO_RF - forcing_data.CO2_RF
 
 
     # ---------------------------------------------
