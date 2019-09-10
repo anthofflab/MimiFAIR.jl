@@ -1,33 +1,38 @@
-using Mimi
+# -----------------------------------------------------------
+# Global temperature change from a given radiative forcing
+# -----------------------------------------------------------
 
 @defcomp temperature begin
 
-    F2x = Parameter()               # Forcing due to CO2 doubling (w/m2)
-    d   = Parameter(index=[thermresponse])      # Thermal response timescales (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - years.
-    F   = Parameter(index=[time])   # Total radiative forcing (w/m2).
+    F2x = Parameter()               # Radiative forcing due to doubling carbon dioxide (Wm⁻²).
+    d   = Parameter(index=[2])      # Thermal response timescales: [1] Thermal equilibration of deep ocean & [2] Thermal admustment of upper ocean (years).
+    q   = Parameter(index=[2])      # Raditive forcing coefficient: [1] Thermal equilibration of deep ocean & [2] Thermal admustment of upper ocean (K W⁻¹m²).
+    F   = Parameter(index=[time])   # Total radiative forcing (Wm⁻²).
 
-    q   = Parameter(index=[thermresponse])      # Forcing coefficient (Thermal equilibration of deep ocean[1] & Thermal admustment of upper ocean[2]) - K/(w/m^2).
-    Tj  = Variable(index=[time,thermresponse])  # Temperature change for two thermal response times.
-    T   = Variable(index=[time])    # Global mean surface temperature anomaly.
+    T   = Variable(index=[time])    # Global mean surface temperature anomaly (K).
+    Tj  = Variable(index=[time,2])  # Temperature change for two thermal response times (K).
 
     function run_timestep(p, v, d, t)
+
         #Calculate Temperatures.
         if is_first(t)
-            #Set initial temperature change for two response times to zero.
+
+            #Set initial temperature change for two response times.
             for j=1:2
-                v.Tj[t,j] = 0.0
+                v.Tj[t,j] = (p.q[j] / p.d[j]) * p.F[t]
             end
-    
-            #Set initial surface temperature anomaly to zero.
+
+            #Sum thermal response boxes to get initial temperature anomaly.
             v.T[t] = sum(v.Tj[t,:])
+
         else
-    
+
             #Calculate temperature change for the two different thermal response times.
             for j=1:2
-                v.Tj[t,j] = v.Tj[t-1,j] * exp((-1.0)/p.d[j]) + 0.5 *p.q[j]*(p.F[t-1] + p.F[t]) * (1 - exp((-1.0)/p.d[j]))
+                v.Tj[t,j] = v.Tj[t-1,j] * exp((-1.0)/p.d[j]) + p.q[j] * (1 - exp((-1.0)/p.d[j])) * p.F[t]
             end
-    
-            #Calculate global mean surface temperature anomaly
+
+            #Calculate global mean surface temperature anomaly.
             v.T[t] = sum(v.Tj[t,:])
         end
     end

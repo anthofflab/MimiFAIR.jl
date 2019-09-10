@@ -22,7 +22,6 @@ function getfair()
 
     m = Model()
     set_dimension!(m, :time, start_year:1:start_year + nsteps - 1)
-    set_dimension!(m, :thermresponse, 1:2)
 
     # ---------------------------------------------
     # Add components to model
