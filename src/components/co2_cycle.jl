@@ -2,7 +2,7 @@
 # Carbon cycle
 # --------------------------------------------------
 
-@defcomp carboncycle begin
+@defcomp co2_cycle begin
 
     CO2_0    = Parameter()              # Pre-industrial carbon dioxide concentrations (ppm).
     r0       = Parameter()              # Pre-industrial 100-year integrated impulse response function (iIRF100).
