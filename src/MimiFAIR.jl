@@ -3,6 +3,7 @@ module MimiFAIR
 using Mimi
 using DataFrames
 using CSVFiles
+using NLsolve
 
 include("components/carboncycle.jl")
 include("components/radiativeforcing.jl")
@@ -50,14 +51,16 @@ function getfair()
     # Set component parameters
     # ---------------------------------------------
 
-    #  CARBON CYCLE 
-    set_param!(m, :carboncycle, :C0, 278.0)
-    set_param!(m, :carboncycle, :r0, 32.4)
+    #  CARBON CYCLE
+    set_param!(m, :carboncycle, :CO2_0, 278.0)
+    set_param!(m, :carboncycle, :r0, 35.0)
     set_param!(m, :carboncycle, :rC, 0.019)
     set_param!(m, :carboncycle, :rT, 4.165)
+    set_param!(m, :carboncycle, :iIRF_max, 97.0)
     set_param!(m, :carboncycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     set_param!(m, :carboncycle, :τ, [10.0^6, 394.4, 36.54, 4.304])
     set_param!(m, :carboncycle, :E, E)
+    set_param!(m, :carboncycle, :gtc2ppm, 2.1289)
 
     # RADIATIVE FORCING
     set_param!(m, :radiativeforcing, :C0, 278.0)
