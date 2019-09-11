@@ -15,6 +15,7 @@
     scale_AR5::Bool        = Parameter()             # Scale the forcing output so that the best estimate forcing in 2011 is -0.45 Wm⁻² based on 2011 emissions from the RCPs.
     fix_pre1850_RCP::Bool  = Parameter()             # Use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al (2011) for 1750 (atmos-chem-phys.net/11/11827/2011).
     rcp_1850_index::Int64  = Parameter()             # Index for year 1850 in RCP emissions (1765-2500), used to index out specific 1850 emission values.
+    model_years            = Parameter(index=[time]) # Years the model is run.
     SOx_emiss              = Parameter(index=[time]) # Sulfur oxides emissions (MtS yr⁻¹).
     BC_emiss               = Parameter(index=[time]) # Black carbon emissions (Mt yr⁻¹).
     OC_emiss               = Parameter(index=[time]) # Organic carbon emissions (Mt yr⁻¹).
