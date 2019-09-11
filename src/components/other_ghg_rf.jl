@@ -13,8 +13,6 @@
     other_ghg_rf_net     = Variable(index=[time])             # Net radiative forcing for all well-mixed greenhouse gases (Wm⁻²).
     other_ghg_rf         = Variable(index=[time, other_ghg])  # Individual radiative forcings for each well-mixed greenhouse gas (Wm⁻²).
 
-end
-
 
     function run_timestep(p, v, d, t)
 
