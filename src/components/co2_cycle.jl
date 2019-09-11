@@ -11,7 +11,7 @@
     gtc2ppm  = Parameter()              # Conversion factor between GtC and ppm.
     iIRF_max = Parameter()              # Maximum value for iIRF100.
     a        = Parameter(index=[4])     # Fraction of emissions entering carbon pool (geological reabsorption[1], deep ocean invasion/equilibration[2], biospheric uptake/ocean thermocline invasion[3], rapid biospheric uptake/ocean mixed-layer invasion[4]).
-    τ        = Parameter(index=[4])     # Decay time constant for each carbon pool in 'a'.
+    τ_CO₂    = Parameter(index=[4])     # Decay time constant for each carbon pool in 'a'.
     E        = Parameter(index=[time])  # Annual carbon dioxide emissions (GtC yr⁻¹).
     T        = Parameter(index=[time])  # Global mean surface temperature anomaly (K).
 
@@ -45,7 +45,7 @@
 
             # Create function to pass to nlsolve to find α.
             function f!(fvec, x)
-                fvec[1] = -v.iIRFT100[t] + sum(x[1] .* p.a .* p.τ .* (1 .- exp.(-100 ./ x[1] ./ p.τ)))
+                fvec[1] = -v.iIRFT100[t] + sum(x[1] .* p.a .* p.τ_CO₂ .* (1 .- exp.(-100 ./ x[1] ./ p.τ_CO₂)))
             end
 
             # Solve for α.
@@ -57,7 +57,7 @@
 
             #Calculate updated carbon cycle time constants and carbon concentrations in each pool.
             for i=1:4
-                b_new = p.τ[i] * v.α[t]
+                b_new = p.τ_CO₂[i] * v.α[t]
                 v.R[t,i] = v.R[t-1,i]  * exp((-1.0/b_new)) + p.a[i] * p.E[t] / p.gtc2ppm
             end
 

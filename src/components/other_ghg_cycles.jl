@@ -7,7 +7,7 @@
     other_ghg                  = Index()                                            # Index for other well-mixed greenhouse gases
     ozone_depleting_substances = Index()                                            # Index for ozone-depleting substances.
 
-    τ                          = Parameter(index=[other_ghg])                       # Atmospheric (e-folding) lifetime for each gas (years).
+    τ_other_ghg                = Parameter(index=[other_ghg])                       # Atmospheric (e-folding) lifetime for each gas (years).
     other_ghg_0                = Parameter(index=[other_ghg])                       # Initial (pre-industrial) concentration for each gas (ppt).
     emiss2conc_other_ghg       = Parameter(index=[other_ghg])                       # Conversion between ppt concentrations and kt emissions.
     emiss_other_ghg            = Parameter(index=[time, other_ghg])                 # Emissions for other well-mixed greenhouse gases (kt yr⁻¹).
@@ -21,11 +21,11 @@
         for g in d.other_ghg
 
             # Set initial concentration values.
-            if isfirst(t)
+            if is_first(t)
                 v.conc_other_ghg[t,g] = p.other_ghg_0[g]
             else
                 # Calculate concentrations based on simple one-box exponential decay model.
-                v.conc_other_ghg[t,g] = v.conc_other_ghg[t-1,g] - v.conc_other_ghg[t-1,g] * (1.0 - exp(-1/p.τ[g])) + 0.5 * (p.emiss_other_ghg[t-1,g] + p.emiss_other_ghg[t,g]) * (1.0/p.emiss2conc_other_ghg[g])
+                v.conc_other_ghg[t,g] = v.conc_other_ghg[t-1,g] - v.conc_other_ghg[t-1,g] * (1.0 - exp(-1/p.τ_other_ghg[g])) + 0.5 * (p.emiss_other_ghg[t-1,g] + p.emiss_other_ghg[t,g]) * (1.0/p.emiss2conc_other_ghg[g])
             end
         end
 
