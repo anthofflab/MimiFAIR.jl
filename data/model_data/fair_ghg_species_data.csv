@@ -1,0 +1,52 @@
+Individual gas data from FAIR 1.3 model data files.,,,,,,,
+,,,,,,,
+(1) Molecular weights in g/mol,,,,,,,
+(2) All lifetimes in years.,,,,,,,
+"(3) Pre-industrial GHG concentrations in their default units for year 1765, (Source: http://www.pik-potsdam.de/~mmalte/rcps). Note: Initial values for CH3BR and CH3CL differed between data file and default values hard-coded into model.  The results here use the hard-coded default values.",,,,,,,
+(4) Radiative efficiences in W/m2/ppb from AR5 WG1 Ch8 SM.,,,,,,,
+"(5) Fractional stratospheric release for ozone depleting substances (Daniel, J. and Velders, G.: A focus on information and options for policymakers, in: Scientific Assessment of Ozone Depletion, WMO, 2011)",,,,,,,
+(6) Number of bromine atoms in each species.,,,,,,,
+(7) Number of chlorine atoms in each species.,,,,,,,
+,,,,,,,
+gas,mol_weight,lifetimes,pi_conc,rad_eff,strat_frac,br_atoms,cl_atoms
+CO2,44.01,,278,1.37E-05,,,
+CH4,16.04,9.3,722,3.63E-04,,,
+N2O,44.013,121,273,3.00E-03,,,
+CF4,88.0043,50000,34.497,0.09,,,
+C2F6,138.01,10000,0,0.25,,,
+C6F14,338.041845,3100,0,0.44,,,
+HFC23,70.01,222,0,0.18,,,
+HFC32,52.02,5.2,0,0.11,,,
+HFC43_10,252.055,16.1,0,0.42,,,
+HFC125,120.02,28.2,0,0.23,,,
+HFC134a,102.03,13.4,0,0.16,,,
+HFC143a,84.04,47.1,0,0.16,,,
+HFC227ea,170.03,38.9,0,0.26,,,
+HFC245fa,134.05,7.7,0,0.24,,,
+SF6,146.06,3200,0,0.57,,,
+CFC_11,137.37,45,0,0.26,0.47,0,3
+CFC_12,120.91,100,0,0.32,0.23,0,2
+CFC_113,187.376,85,0,0.3,0.29,0,3
+CFC_114,170.92,190,0,0.31,0.12,0,2
+CFC_115,154.466,1020,0,0.2,0.04,0,1
+CARB_TET,153.81,26,0,0.17,0.56,0,4
+MCF,133.4,5,0,0.07,0.67,0,3
+HCFC_22,86.47,11.9,0,0.21,0.13,0,1
+HCFC_141B,116.94,9.2,0,0.16,0.34,0,2
+HCFC_142B,100.49,17.2,0,0.19,0.17,0,1
+HALON1211,165.36,16,0,0.29,0.62,1,1
+HALON1202,209.82,2.9,0,0.27,0.62,2,0
+HALON1301,148.91,65,0,0.3,0.28,1,0
+HALON2402,259.823,20,0,0.31,0.65,2,0
+CH3BR,94.94,0.8,13.0975,0.004,0.6,1,0
+CH3CL,50.49,1,547.996,0.01,0.44,0,1
+N2,28.013,,,,,,
+N,14.0067,,,,,,
+C,12.01,,,,,,
+S,32.065,,,,,,
+SO2,64.066,,,,,,
+NO,30.01,,,,,,
+NO2,46.0055,,,,,,
+O3,48,,,,,,
+O2,31.9988,,,,,,
+AIR,28.97,,,,,,
