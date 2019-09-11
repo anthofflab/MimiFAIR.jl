@@ -1,64 +1,37 @@
-using Mimi
-using DataFrames
 using Test
 
-include("../src/fair.jl")
-using .Fair
-
+include("../src/MimiFAIR.jl")
 @testset "FAIR" begin
 
 #------------------------------------------------------------------------------
-#   1. Run tests on the whole model
+#   1. Carry out test to check the model runs.
 #------------------------------------------------------------------------------
 
-@testset "FAIR-model" begin
+    @testset "FAIR-model" begin
 
-global m = getfair()
-run(m)
+    m = MimiFAIR.getfair()
+    run(m)
 
-end #FAIR-model testset
+    end # FAIR model run test.
 
 #------------------------------------------------------------------------------
-#   2. Run tests to make sure integration version (Mimi v0.5.0)
-#   values match Mimi 0.4.0 values
+#   2. Carry out tests to make sure Mimi-FAIR matches the Python version.
 #------------------------------------------------------------------------------
 
-@testset "FAIR-integration" begin
+    @testset "FAIR-Python" begin
 
-Precision = 1.0e-11
-nullvalue = -999.999
+    Precision = 1.0e-5
 
-global m = getfair()
-run(m)
+    m = MimiFAIR.getfair(rcp_scenario = "RCP85", start_year = 1765, end_year = 2500)
+    run(m)
 
-for c in map(name, Mimi.compdefs(m)), v in Mimi.variable_names(m, c)
-    
-    #load data for comparison
-    filepath = joinpath(@__DIR__, "../data/validation_data_v040/$c-$v.csv")        
-    results = m[c, v]
+    # Load Python version of FAIR output.
+    python_co2_conc      = DataFrame(load(joinpath(@__DIR__, "..", "data", "validation_data", "rcp85_python_fair_concentrations.csv"))).co2
+    python_temperature   = DataFrame(load(joinpath(@__DIR__, "..", "data", "validation_data", "rcp85_python_fair_temperature.csv"))).temperature
 
-    if typeof(results) <: Number
-        validation_results = DataFrames.readtable(filepath)[1,1]
-        
-    else
-        validation_results = convert(Array, DataFrames.readtable(filepath))
+    # Run tests for global temperature anomaly, atmospheric CO₂ concentrations, and total radiative forcing from 1765-2500.
+    @test m[:co2_cycle, :C]            ≈ python_co2_conc atol = Precision
+    @test m[:temperature, :T]          ≈ python_temperature atol = Precision
 
-        #remove NaNs
-        results[ismissing.(results)] .= nullvalue
-        results[isnan.(results)] .= nullvalue
-        validation_results[ismissing.(validation_results)] .= nullvalue
-        validation_results[isnan.(validation_results)] .= nullvalue
-
-        #match dimensions
-        if size(validation_results,1) == 1
-            validation_results = validation_results'
-        end
-        
-    end
-    @test results ≈ validation_results atol = Precision
-    
-end #for loop
-
-end #FAIR-integration testset
-
-end #FAIR testset
+    end # FAIR Python comparison test.
+end # All FAIR tests.
