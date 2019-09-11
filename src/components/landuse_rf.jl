@@ -13,7 +13,7 @@
     function run_timestep(p, v, d, t)
 
         # Calculate cumulative land use emissions (based on RCP 'OtherCO2' emissions).
-        if isfirst(t)
+        if is_first(t)
             v.cumulative_emiss[t] = p.landuse_emiss[t]
         else
             v.cumulative_emiss[t] = v.cumulative_emiss[t-1] + p.landuse_emiss[t]

@@ -42,7 +42,7 @@
 
         # Calculate total tropospheric ozone radiative forcing, accounting for a temperature feedback.
             # Note from original FAIR code: "We fit a curve to the 2000, 2030 and 2100 best estimates of feedback based on middle-of-the-road temperature projections."
-        if isfirst(t)
+        if is_first(t)
             # Initial O₃ forcing temperature sensitivity assumed to be zero (since model has not estimated temperature yet).
             v.forcing_trop_O₃[t] = v.F_CH₄[t] + v.F_CO[t] + v.F_NMVOC[t] + v.F_NOx[t] + temperature_feedback(p.T0)
         else
