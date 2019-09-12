@@ -12,7 +12,7 @@ NLsolve = "2774e3e8-f4cf-5e23-947b-6d7e65073b56"
 Mimi = "0.9"
 julia = "1"
 DataFrames = "0.19"
-CSVFiles = "0.13"
+CSVFiles = "0.13, 0.14, 0.15, 0.16"
 NLsolve = "4.1"
 
 [extras]
