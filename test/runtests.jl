@@ -31,7 +31,7 @@ include("../src/MimiFAIR.jl")
     python_co2_conc      = DataFrame(load(joinpath(@__DIR__, "..", "data", "validation_data", "rcp85_python_fair_concentrations.csv"))).co2
     python_temperature   = DataFrame(load(joinpath(@__DIR__, "..", "data", "validation_data", "rcp85_python_fair_temperature.csv"))).temperature
 
-    # Run tests for global temperature anomaly, atmospheric CO₂ concentrations, and total radiative forcing from 1765-2500.
+    # Run tests for global temperature anomaly and atmospheric CO₂ concentrations.
     @test m[:co2_cycle, :C]            ≈ python_co2_conc atol = Precision
     @test m[:temperature, :T]          ≈ python_temperature atol = Precision
 
