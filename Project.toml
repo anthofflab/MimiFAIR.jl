@@ -1,22 +1,22 @@
 name = "MimiFAIR"
 uuid = "73d86c50-c5fa-11e9-3497-c3dc913e627a"
-version = "0.1.0-DEV"
+version = "0.1.0"
 
 [deps]
+NLsolve = "2774e3e8-f4cf-5e23-947b-6d7e65073b56"
 Mimi = "e4e893b0-ee5e-52ea-8111-44b3bdec128c"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 CSVFiles = "5d742f6a-9f54-50ce-8119-2520741973ca"
-NLsolve = "2774e3e8-f4cf-5e23-947b-6d7e65073b56"
-
-[compat]
-Mimi = "0.9"
-julia = "1"
-DataFrames = "0.19"
-CSVFiles = "0.13, 0.14, 0.15, 0.16"
-NLsolve = "4.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+julia = "1"
+NLsolve = "4.1"
+Mimi = "0.9"
+DataFrames = "0.19"
+CSVFiles = "0.13, 0.14, 0.15, 0.16"
 
 [targets]
 test = ["Test"]
