@@ -1,4 +1,6 @@
 using Test
+using CSVFiles
+using DataFrames
 
 include("../src/MimiFAIR.jl")
 @testset "FAIR" begin
