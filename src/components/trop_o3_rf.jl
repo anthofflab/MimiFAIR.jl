@@ -8,7 +8,7 @@
     mol_weight_NO         = Parameter()             # Molecular mass of NO.
     CH₄_0                 = Parameter()             # Initial (pre-industrial) atmospheric methane concentration (ppb).
     T0                    = Parameter()             # Initial global mean surface temperature anomaly (K).
-    fix_pre1850_RCP::Bool = Parameter()             # Switch to use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al. (2011) (atmos-chem-phys.net/11/11827/2011).
+    fix_pre1850_RCP       = Parameter{Bool}()             # Switch to use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al. (2011) (atmos-chem-phys.net/11/11827/2011).
     CH₄                   = Parameter(index=[time]) # Atmospheric methane concentration (ppb).
     NOx_emissions         = Parameter(index=[time]) # Nitrogen oxides emissions (MtN yr⁻¹).
     CO_emissions          = Parameter(index=[time]) # Carbon monoxide emissions (MtCO yr⁻¹).

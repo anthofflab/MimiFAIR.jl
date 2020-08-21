@@ -12,9 +12,9 @@
     F_1765                 = Parameter()             # For AR5 scaling, pre-industrial forcing was not zero because there were some emissions (use estimates from Skeie et al).
     F_2011                 = Parameter()             # 2011 forcing for AR5 scaling (use estimates from Skeie et al).
     rf_scale_aero_indirect = Parameter()             # Scaling factor to capture effective radiative forcing uncertainty.
-    scale_AR5::Bool        = Parameter()             # Scale the forcing output so that the best estimate forcing in 2011 is -0.45 Wm⁻² based on 2011 emissions from the RCPs.
-    fix_pre1850_RCP::Bool  = Parameter()             # Use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al (2011) for 1750 (atmos-chem-phys.net/11/11827/2011).
-    rcp_1850_index::Int64  = Parameter()             # Index for year 1850 in RCP emissions (1765-2500), used to index out specific 1850 emission values.
+    scale_AR5              = Parameter{Bool}()             # Scale the forcing output so that the best estimate forcing in 2011 is -0.45 Wm⁻² based on 2011 emissions from the RCPs.
+    fix_pre1850_RCP        = Parameter{Bool}()             # Use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al (2011) for 1750 (atmos-chem-phys.net/11/11827/2011).
+    rcp_1850_index         = Parameter{Int64}()      # Index for year 1850 in RCP emissions (1765-2500), used to index out specific 1850 emission values.
     model_years            = Parameter(index=[time]) # Years the model is run.
     SOx_emiss              = Parameter(index=[time]) # Sulfur oxides emissions (MtS yr⁻¹).
     BC_emiss               = Parameter(index=[time]) # Black carbon emissions (Mt yr⁻¹).
