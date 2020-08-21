@@ -28,7 +28,7 @@
             # Note from original FAIR code: "The RCP scenarios give a negative forcing prior to ~1780. This is
                 # because the anthropogenic emissions are given to be zero in RCPs but not zero in the Skeie
                 # numbers which are used here. This can be fixed to give a more linear behaviour."
-        if gettime(t)  >= 1850 || p.fix_pre1850_RCP == false
+        if t  >= TimestepValue(1850) || p.fix_pre1850_RCP == false
             v.F_CH₄[t] = 0.166/960  * (p.CH₄[t]-722.0)
             v.F_CO[t] = 0.058/681.8 * (p.CO_emissions[t]-170.0)
             v.F_NMVOC[t] = 0.035/155.84 * (p.NMVOC_emissions[t]-10.0)

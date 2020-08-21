@@ -195,7 +195,6 @@ function getfair(;rcp_scenario::String="RCP85", start_year::Int64=1765, end_year
     set_param!(m, :aerosol_indirect_rf, :SOx_emiss, rcp_emissions.SOx)
     set_param!(m, :aerosol_indirect_rf, :BC_emiss, rcp_emissions.BC)
     set_param!(m, :aerosol_indirect_rf, :OC_emiss, rcp_emissions.OC)
-    set_param!(m, :aerosol_indirect_rf, :rcp_1850_index, findall(x -> x == 1850, collect(start_year:end_year))[1])
     set_param!(m, :aerosol_indirect_rf, :model_years, collect(start_year:end_year))
     set_param!(m, :aerosol_indirect_rf, :SOx_emiss_1765, 1.0)
     set_param!(m, :aerosol_indirect_rf, :BC_OC_emiss_1765, 11.2)
