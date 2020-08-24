@@ -12,7 +12,7 @@ CSVFiles = "5d742f6a-9f54-50ce-8119-2520741973ca"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [compat]
-julia = "1"
+julia = "1.4"
 NLsolve = "4.1"
 Mimi = "1"
 DataFrames = "0.19, 0.20, 0.21"
