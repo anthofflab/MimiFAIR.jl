@@ -14,9 +14,9 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 [compat]
 julia = "1"
 NLsolve = "4.1"
-Mimi = "0.9"
-DataFrames = "0.19"
-CSVFiles = "0.13, 0.14, 0.15, 0.16"
+Mimi = "1"
+DataFrames = "0.19, 0.20, 0.21"
+CSVFiles = "0.13, 0.14, 0.15, 0.16, 1"
 
 [targets]
 test = ["Test"]

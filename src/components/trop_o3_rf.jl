@@ -8,7 +8,7 @@
     mol_weight_NO         = Parameter()             # Molecular mass of NO.
     CH₄_0                 = Parameter()             # Initial (pre-industrial) atmospheric methane concentration (ppb).
     T0                    = Parameter()             # Initial global mean surface temperature anomaly (K).
-    fix_pre1850_RCP::Bool = Parameter()             # Switch to use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al. (2011) (atmos-chem-phys.net/11/11827/2011).
+    fix_pre1850_RCP       = Parameter{Bool}()             # Switch to use different relationship for 1750/65 to 1850 based on anthropogenic emissions from Skeie et al. (2011) (atmos-chem-phys.net/11/11827/2011).
     CH₄                   = Parameter(index=[time]) # Atmospheric methane concentration (ppb).
     NOx_emissions         = Parameter(index=[time]) # Nitrogen oxides emissions (MtN yr⁻¹).
     CO_emissions          = Parameter(index=[time]) # Carbon monoxide emissions (MtCO yr⁻¹).
@@ -28,7 +28,7 @@
             # Note from original FAIR code: "The RCP scenarios give a negative forcing prior to ~1780. This is
                 # because the anthropogenic emissions are given to be zero in RCPs but not zero in the Skeie
                 # numbers which are used here. This can be fixed to give a more linear behaviour."
-        if gettime(t)  >= 1850 || p.fix_pre1850_RCP == false
+        if t  >= TimestepValue(1850) || p.fix_pre1850_RCP == false
             v.F_CH₄[t] = 0.166/960  * (p.CH₄[t]-722.0)
             v.F_CO[t] = 0.058/681.8 * (p.CO_emissions[t]-170.0)
             v.F_NMVOC[t] = 0.035/155.84 * (p.NMVOC_emissions[t]-10.0)

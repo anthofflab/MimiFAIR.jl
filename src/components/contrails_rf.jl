@@ -6,7 +6,7 @@
 
     E_ref             = Parameter()             # Reference-year emissions of aviation nitrogen oxides  (Mt yr⁻¹).
     F_ref             = Parameter()             # Forcing from linear persistent contrails + contrail induced cirrus. The default for 2005 is from Lee et al, 2009 (Atmos. Environ., doi:10.1016/j.atmosenv.2009.04.024).
-    ref_is_NO2::Bool  = Parameter()             # True if 'E_ref' is in units of NO₂ rather than N.
+    ref_is_NO2        = Parameter{Bool}()             # True if 'E_ref' is in units of NO₂ rather than N.
     mol_weight_NO₂    = Parameter()             # Molecular mass of nitrogen dioxide.
     mol_weight_N      = Parameter()             # Molecular mass of nitrogen.
     NOx_emiss         = Parameter(index=[time]) # Nitrogen oxides emissions.
