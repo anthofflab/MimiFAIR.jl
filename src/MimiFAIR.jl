@@ -24,10 +24,7 @@ include("components/temperature.jl")
 include("components/total_rf.jl")
 include("components/trop_o3_rf.jl")
 
-
-export getfair
-
-function getfair(;rcp_scenario::String="RCP85", start_year::Int64=1765, end_year::Int64=2500, F2x::Float64=3.71, TCR::Float64=1.6, ECS::Float64=2.75, d::Array{Float64,1}=[239.0, 4.1])
+function get_model(;rcp_scenario::String="RCP85", start_year::Int64=1765, end_year::Int64=2500, F2x::Float64=3.71, TCR::Float64=1.6, ECS::Float64=2.75, d::Array{Float64,1}=[239.0, 4.1])
 
     # ---------------------------------------------
     # Set up some data.

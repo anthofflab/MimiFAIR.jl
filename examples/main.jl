@@ -1,9 +1,7 @@
 using Mimi
+using MimiFAIR
 
-include("fair.jl")
-using .Fair
-
-m = getfair()
+m = MimiFAIR.get_model()
 run(m)
 
 explore(m)

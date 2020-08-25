@@ -1,8 +1,8 @@
 using Test
 using CSVFiles
 using DataFrames
+using MimiFAIR
 
-include("../src/MimiFAIR.jl")
 @testset "FAIR" begin
 
 #------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ include("../src/MimiFAIR.jl")
 
     @testset "FAIR-model" begin
 
-    m = MimiFAIR.getfair()
+    m = MimiFAIR.get_model()
     run(m)
 
     end # FAIR model run test.
@@ -24,7 +24,7 @@ include("../src/MimiFAIR.jl")
 
     Precision = 1.0e-5
 
-    m = MimiFAIR.getfair(rcp_scenario = "RCP85", start_year = 1765, end_year = 2500)
+    m = MimiFAIR.get_model(rcp_scenario = "RCP85", start_year = 1765, end_year = 2500)
     run(m)
 
     # Load Python version of FAIR output.
