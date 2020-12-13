@@ -94,7 +94,7 @@ end
 #       rcp_scenario:    A string indicating which RCP scenario to use ("RCP26", "RCP45", "RCP60", & "RCP85").
 #----------------------------------------------------------------------------------------------------------------------
 
-function load_fair_data(start_year::Int64, end_year::Int64, rcp_scenario::String)
+function load_fair_data(start_year::Int, end_year::Int, rcp_scenario::String)
 
     # Calculate indicies to extract RCP data (RCP data spans 1765-2500)
     start_index, end_index = findall((in)([start_year, end_year]), collect(1765:2500))
