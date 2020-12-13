@@ -92,7 +92,7 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
     set_param!(m, :ch4_cycle, :fossil_frac, gas_fractions.ch4_fossil)
     set_param!(m, :ch4_cycle, :oxidation_frac, 0.61)
     set_param!(m, :ch4_cycle, :mol_weight_CH₄, gas_data[gas_data.gas .== "CH4", :mol_weight][1])
-    set_param!(m, :ch4_cycle, :mol_weight_CO₂, gas_data[gas_data.gas .== "CO2", :mol_weight][1])
+    set_param!(m, :ch4_cycle, :mol_weight_C, gas_data[gas_data.gas .== "C", :mol_weight][1])
     set_param!(m, :ch4_cycle, :emiss2conc_ch4, conversions[conversions.gases .== "CH4", :emiss2conc][1])
 
     # ---- Nitrous Oxide Cycle ---- #
@@ -110,7 +110,6 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
     set_param!(m, :co2_cycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     set_param!(m, :co2_cycle, :τ_CO₂, [10.0^6, 394.4, 36.54, 4.304])
     set_param!(m, :co2_cycle, :E, rcp_emissions.FossilCO2 .+ rcp_emissions.OtherCO2)
-    set_param!(m, :co2_cycle, :gtc2ppm, conversions[conversions.gases .== "CO2", :emiss2conc][1])
 
     # ---- Other Well-Mixed Greenhouse Gas Cycles ---- #
     set_param!(m, :other_ghg_cycles, :τ_other_ghg, gas_data[findall((in)(other_ghg_names), gas_data.gas), :lifetimes])    
@@ -223,6 +222,7 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
     set_param!(m, :NOx_emiss, rcp_emissions.NOx)
     set_param!(m, :fix_pre1850_RCP, true)
     set_param!(m, :mol_weight_N, gas_data[gas_data.gas .== "N", :mol_weight][1])
+    set_param!(m, :gtc2ppm, conversions[conversions.gases .== "CO2", :emiss2conc][1])
 
     # ---------------------------------------------
     # Create connections between Mimi components.
