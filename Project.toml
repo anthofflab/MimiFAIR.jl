@@ -1,6 +1,6 @@
 name = "MimiFAIR"
 uuid = "73d86c50-c5fa-11e9-3497-c3dc913e627a"
-version = "1.0.0"
+version = "1.0.1-DEV"
 
 [deps]
 NLsolve = "2774e3e8-f4cf-5e23-947b-6d7e65073b56"
