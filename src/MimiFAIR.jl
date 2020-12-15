@@ -109,7 +109,7 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
     set_param!(m, :co2_cycle, :iIRF_max, 97.0)
     set_param!(m, :co2_cycle, :a, [0.2173, 0.2240, 0.2824, 0.2763])
     set_param!(m, :co2_cycle, :τ_CO₂, [10.0^6, 394.4, 36.54, 4.304])
-    set_param!(m, :co2_cycle, :E, rcp_emissions.FossilCO2 .+ rcp_emissions.OtherCO2)
+    set_param!(m, :co2_cycle, :E_CO₂, rcp_emissions.FossilCO2 .+ rcp_emissions.OtherCO2)
 
     # ---- Other Well-Mixed Greenhouse Gas Cycles ---- #
     set_param!(m, :other_ghg_cycles, :τ_other_ghg, gas_data[findall((in)(other_ghg_names), gas_data.gas), :lifetimes])    
@@ -228,6 +228,7 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
     # Create connections between Mimi components.
     # ---------------------------------------------
     connect_param!(m, :co2_cycle, :T, :temperature, :T)
+    connect_param!(m, :co2_cycle, :E_ox_CH₄, :ch4_cycle, :oxidised_CH₄_GtC)
     connect_param!(m, :trop_o3_rf, :CH₄, :ch4_cycle, :CH₄)
     connect_param!(m, :strat_o3_rf, :conc_ODS, :other_ghg_cycles, :conc_ods)
     connect_param!(m, :ch4_rf, :CH₄, :ch4_cycle, :CH₄)
