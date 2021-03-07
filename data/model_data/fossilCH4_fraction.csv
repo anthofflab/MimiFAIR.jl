@@ -2,7 +2,7 @@ Fossil CH4 fraction as a proportion of total anthropogenic CH4 emissions,,,,
 Original sources: ,RCP emissions database pik.potsdam.de/~mmalte/rcps,,,
 ,RCP database tntcat.iiasa.ac.at/RcpDb/,,,
 Method: ,Linearly interpolate between decades. Years before 1850 and after 2100 are set equal to 1850 and 2100 respectively.,,,
-Year,RCP3PD,RCP45,RCP6,RCP85
+Year,RCP26,RCP45,RCP60,RCP85
 1765,0,0,0,0
 1766,0,0,0,0
 1767,0,0,0,0
