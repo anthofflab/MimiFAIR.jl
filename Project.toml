@@ -16,7 +16,7 @@ julia = "1.4"
 NLsolve = "4.1"
 Mimi = "1"
 CSVFiles = "0.13, 0.14, 0.15, 0.16, 1"
-DataFrames = "0.19, 0.20, 0.21, 0.22"
+DataFrames = "0.19, 0.20, 0.21, 0.22, 1.0"
 
 [targets]
 test = ["Test"]
