@@ -113,7 +113,7 @@ function get_model(;rcp_scenario::String="RCP85", start_year::Int=1765, end_year
 
     # ---- Other Well-Mixed Greenhouse Gas Cycles ---- #
     set_param!(m, :other_ghg_cycles, :τ_other_ghg, gas_data[findall((in)(other_ghg_names), gas_data.gas), :lifetimes])    
-    set_param!(m, :other_ghg_cycles, :emiss_other_ghg, convert(Matrix, rcp_emissions[!,Symbol.(other_ghg_names)]))
+    set_param!(m, :other_ghg_cycles, :emiss_other_ghg, Matrix(rcp_emissions[!,Symbol.(other_ghg_names)]))
     set_param!(m, :other_ghg_cycles, :emiss2conc_other_ghg, conversions[findall((in)(other_ghg_names), conversions.gases), :emiss2conc])
 
     # ---- Methane Radiative Forcing ---- #
